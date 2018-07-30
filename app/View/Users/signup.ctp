@@ -16,7 +16,7 @@
                             <form action="<?php echo $this->webroot?>users/signup" role="form" method="post">
                                 <div class="form-group form-group-default">
                                     <label>Name</label>
-                                    <input type="text" class="form-control" required name="data[Info][name]" aria-label="enter your name"
+                                    <input type="text" class="form-control" required name="data[Customer][name]" aria-label="enter your name"
                                     placeholder="enter your name">
                                 </div>
                                 <div class="form-group form-group-default">
@@ -31,7 +31,7 @@
                                 </div>
                                 <div class="form-group form-group-default">
                                     <label>Phone</label>
-                                    <input type="tel" class="form-control" required name="data[Info][phone]" aria-label="enter your phone number"
+                                    <input type="tel" class="form-control" required name="data[Customer][phone]" aria-label="enter your phone number"
                                     placeholder="enter your phone number">
                                 </div>
                                 <div class="form-group">

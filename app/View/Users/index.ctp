@@ -9,17 +9,13 @@
                    <?php echo $this->Flash->render('success');?>
                    <?php echo $this->Flash->render('error');?>
                               <div id="forReview">
-                    <input type="hidden" name="data[Parent_review][parent_id]" value="<?php echo $parents['Parentt']['id']?>">
-                     <input type="hidden" name="data[All_review][school_id]" value="" id="all_rev">
-                 <select style="width:100%; max-width:80%;" class="select2_ col-md-12 form-control animated fadeIn" data-placeholder="Choose a school to review" name="data[Parent_review][school_id]" id="select_school">
+                 <select style="width:100%; max-width:80%;" class="select2_ col-md-12 form-control animated fadeIn" data-placeholder="Choose a service" name="data[Service][id]" id="select_school">
                             <option value=""></option>
-                            <?php if(isset($schools)){ foreach($schools as $school){?>
-                            <option value="<?php echo $school['School']['id']?>"><?php echo $school['School']['name']?></option>
+                            <?php if(isset($services)){ foreach($services as $service){?>
+                            <option value="<?php echo $service['Service']['id']?>"><?php echo $service['Service']['name']?></option>
                             <?php }}?>
                         </select>
-            <button style="width:100%; max-width:80%;" type="button" id="review" class="btn waves-effect blue list-search-btn">Review</button>
-                    
-                     <p class="font-small grey-text ">School does not exist? <a target="_blank" href="<?php echo $this->webroot?>home/refer" class="dark-grey-text font-bold" id="refer">Please refer your child's school</a></p>
+            <button style="width:100%; max-width:80%;" type="button" id="review" class="btn waves-effect blue list-search-btn">Go!</button>
                    </div>
               
                 
@@ -93,90 +89,3 @@
         
     </main>
     <!--Main Layout-->
-
-<script>
-    $("#result").hide();
-    $("#review").attr("disabled", "disabled");
-$(document).ready(function(){
-    $(document).on('change', '#select_school', function(){
-        $("#review").removeAttr("disabled", "disabled");
-        $("#all_rev").val($(this).val());
-    });
-    $("#review").on('click', function(){
-        $("#result").show('slow');
-        $("#forReview").hide('slow');
-    });
-    $("#acad_rate").starRating({
-    disableAfterRate: false,
-    starShape: 'rounded',
-    hoverColor: '#105694',
-    starSize: 25,
-    useGradient: false,
-    strokeColor: '#1E88E5',
-    activeColor: '#105694',
-    callback: function(currentIndex, $el){
-        $("#rate_for_acad").val(currentIndex);
-        var lowArray = [0.5, 1, 1.5, 2];
-        var averageArray = [2.5, 3, 3.5];
-        var highArray = [4, 4.5, 5];
-        if($.inArray(currentIndex, lowArray) !== -1){
-             $("#acad_rating").val("Low");
-        }
-        if($.inArray(currentIndex, averageArray) !== -1){
-             $("#acad_rating").val("Average");
-        }
-        if($.inArray(currentIndex, highArray) !== -1){
-             $("#acad_rating").val("High");
-        }
-    }
-  });
-     $("#mgt_rate").starRating({
-    disableAfterRate: false,
-    hoverColor: '#105694',
-    starShape: 'rounded',
-    starSize: 25,
-    useGradient: false,
-    strokeColor: '#1E88E5',
-    activeColor: '#105694',
-    callback: function(currentIndex, $el){
-        $("#rate_for_mgt").val(currentIndex);
-       var lowArray = [0.5, 1, 1.5, 2];
-        var averageArray = [2.5, 3, 3.5];
-       var highArray = [4, 4.5, 5];
-        if($.inArray(currentIndex, lowArray) !== -1){
-             $("#mgt_rating").val("Low");
-        }
-        if($.inArray(currentIndex, averageArray) !== -1){
-             $("#mgt_rating").val("Average");
-        }
-        if($.inArray(currentIndex, highArray) !== -1){
-             $("#mgt_rating").val("High");
-        }
-    }
-  });
-     $("#co_rate").starRating({
-    disableAfterRate: false,
-    hoverColor: '#105694',
-    starSize: 25,
-    starShape: 'rounded',
-    useGradient: false,
-    strokeColor: '#1E88E5',
-    activeColor: '#105694',
-    callback: function(currentIndex, $el){
-        $("#rate_for_co").val(currentIndex);
-      var lowArray = [0.5, 1, 1.5, 2];
-        var averageArray = [2.5, 3, 3.5];
-        var highArray = [4, 4.5, 5];
-        if($.inArray(currentIndex, lowArray) !== -1){
-             $("#co_rating").val("Low");
-        }
-        if($.inArray(currentIndex, averageArray) !== -1){
-             $("#co_rating").val("Average");
-        }
-        if($.inArray(currentIndex, highArray) !== -1){
-             $("#co_rating").val("High");
-        }
-    }
-  });
-});
-</script>
