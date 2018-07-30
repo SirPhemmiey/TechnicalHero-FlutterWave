@@ -8,123 +8,92 @@ App::uses('SimplePasswordHasher', 'Controller/Component/Auth');
 //secret key FLWSECK-8277873fbb2d94e80afbc9d3bef53042-X
 class UsersController extends AppController {
 
-    public $uses = array('Customer', 'Provider', 'Services');
-
+    public $uses = array('Customer', 'Provider', 'Services', 'Info', 'Login');
+    public $components = array('Auth');
     public function beforeFilter() {
-
+        $this->Auth->loginAction = array('controller' => 'users', 'action' => 'login');
+        //$this->Auth->authError = array('Please login in');
+        $this->Auth->loginRedirect = array('controller' => 'users', 'action' => 'index');
+        $this->Auth->logoutRedirect = array('controller' => 'users', 'action' => 'login');
+        $this->Auth->authenticate = array(
+            'Form' => array(
+                'userModel' => 'Login', 'fields' => array(
+                    'username' => 'email', 'password' => 'password')));
+        $this->Auth->allow('login', 'signup', 'logout');
     }
 
     public function index() {
         $this->layout = false;
+        $id = $this->Auth->user('id');
+        //$services = $this->Service->findById($id);
+        $services = $this->Service->find('all');
+        $this->set('services', $services);
     }
-
+    
     public function login() {
-        $this->layout = false;
-        $secret = '7x0jhxt"9(thpX60..A';
-            $this->request->onlyAllow('post');
-            $json = file_get_contents("php://input");
-            //convert it into assoc array
-            $data = json_decode($json, true);
-            $username = $data['username'];
-            $password = $data['password'];
-            if ($username != '' && $password != '') {
-                $passwordHasher = new SimplePasswordHasher(array('hashType' => 'sha256'));
-                $password = $passwordHasher->hash($password);
-                $loginInfo = $this->Login->findByUsernameAndPassword($username, $password);
-                $userInfo = $this->Customer->findByEmail($username);
-                if (!empty($loginInfo) && !empty($userInfo)) {
-                    $tokenArray['id'] = $loginInfo['Login']['id'];
-                    $tokenArray['username'] = $loginInfo['Login']['username'];
-                    $tokenArray['cus_info_id'] = $userInfo['Customer']['id'];
-                    $token = JWT::encode($tokenArray, $secret);
-                    $response = array(
-                        'success' => true,
-                        'username' => $loginInfo['Login']['username'], 
-                        'token' => $token,
-                        'phone' => $userInfo['Customer']['phone_number'],
-                        'pic' => $userInfo['Customer']['pic'],
-                        'name' => $userInfo['Customer']['full_name']
-                    );
+        $this->layout = 'login';
+        if ($this->request->is('post')) {
+            if (!empty($this->request->data)) {
+                if ($this->Auth->login()) {
+                    $this->redirect('/users/index');
                 }
                 else {
-                    $response = array(
-                        'error' => 'Invalid credentials.'
-                    );
+                    $msg = "Invalid credentials";
+                    $color = "danger";
+                    // $this->redirect(array('controller' => 'users', 'action' => 'login', 'msg' => $msg));
                 }
             }
             else {
-                //fields are empty
-                $response = array(
-                    'error' => 'All fields are required.',
-                );
+                $msg = "Please fill all fields";
+                $color = "warning";
+                // $this->redirect(array('controller' => 'users', 'action' => 'login', 'msg' => $msg));
             }
-            echo json_encode($response);
+            $this->set(compact('msg', 'color'));
+        }
     }
 
     public function signup() {
-        $this->layout = false;
-        $this->request->onlyAllow('post');
-        $json = file_get_contents("php://input");
-        $data = json_decode($json, true);
-        $full_name = $data['full_name'];
-        $username = $data['email'];
-        $phone = $data['phone'];
-        $password = $data['password'];
-        $device_id = $data['device_id'];
-        $type = $data['type'];
-        //ensure all fields are not empty before processing
-        if ($full_name != '' && $phone != '' && $username != '' && $password != '' && $type != '') {
-            $passwordHasher = new SimplePasswordHasher(array('hashType' => 'sha256'));
-            $password = $passwordHasher->hash($password);
-            $cusData = array(
-                'email' => $username,
-                'full_name' => $full_name,
-                'phone_number' => $phone,
-                'status' => 'active',
-                'created' => Date("d-m-Y"),
-                'device_id' => $device_id
-            );
-            $cusCondition = array('email' => $username);
-            //check if the username already exist
-            if ($this->Customer->hasAny($cusCondition)) {
-                $response = array(
-                    'success' => false,
-                    'error' => 'Username is already in use.'
-                );
+        $this->layout = 'login';
+        if ($this->request->is('post')) {
+            $email = $this->request->data['Login']['email'];
+            $password = $this->request->data['Login']['password'];
+            $phone = $this->request->data['Info']['phone'];
+            $name = $phone = $this->request->data['Info']['name'];
+            $this->request->data['Login']['type'] = 'Customer';
+            if (!empty($email) && !empty($password) && !empty($phone)) {
+               $conditions = array('email' => $email);
+               if ($this->Login->hasAny($conditions)) {
+                    $msg = "You have an existing account.";
+                    $color = "warning";
+               }
+               else {
+                    $this->Info->create();
+                    if ($this->Info->save($this->data)) {
+                        $this->Login->create();
+                        $this->request->data['Login']['email'] = $email;
+                        $this->request->data['Login']['password'] = $password;
+                        $this->request->data['Login']['info_id'] = $this->Info->id;
+                        if ($this->Login->save($this->data)) {
+                            $msg = "Account successfully created. You can now login";
+                            $color = "success";
+                        }
+                    }
+                    else {
+                        $msg = "Oops! An error occured while creating your account";
+                        $color = "danger";
+                    }
+               }
             }
             else {
-                //if it doesnt then save the data
-                if ($this->Customer->save($cusData)) {
-                    //$this->request->data['Login']['info_id'] = 
-                    $loginData = array(
-                        'username' => $username,
-                        'password' => $password,
-                        'info_id' => $this->Customer->id,
-                        'type' => $type
-                    );
-                    $this->Login->save($loginData);
-                    $response = array(
-                        'success' => true
-                    );
-                }
-                else {
-                    //if an error occured during registration
-                    $response = array(
-                        'success' => false,
-                        'error' => 'An error occured during registration.'
-                    );
-                }
+                $msg = "Please fill all fields";
+                $color = "warning";
+                // $this->redirect(array('controller' => 'users', 'action' => 'signup', 'msg' => $msg));
             }
+            $this->set(compact('msg', 'color'));
         }
-        else {
-            //if any of the fields are empty
-            $response = array(
-                'success' => false,
-                'error' => 'All fields are required.',
-            );
-        }
-        echo json_encode($response);
+       
     }
+
 
     public function home() {
         $secret = '7x0jhxt"9(thpX60..A';
