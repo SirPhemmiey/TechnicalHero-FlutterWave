@@ -26,7 +26,7 @@ class UsersController extends AppController {
         $this->layout = 'index';
         $id = $this->Auth->user('id');
         $customer = $this->Customer->findById($id);
-        $services = $this->Service->find('all');
+        $services = $this->Service->find('all', array('group' => 'Service.id'));
         $this->set(compact('services', 'customer'));
     }
     
@@ -50,6 +50,12 @@ class UsersController extends AppController {
             }
             $this->set(compact('msg', 'color'));
         }
+    }
+
+    public function logout() {
+        //if ($this->Auth->logout()) {
+            $this->redirect($this->Auth->logout());
+        //}
     }
 
     public function signup() {
@@ -92,5 +98,28 @@ class UsersController extends AppController {
             $this->set(compact('msg', 'color'));
         }
        
+    }
+
+    public function service_providers() {
+        $this->layout = 'index';
+        $id = $this->Auth->user('id');
+        $customer = $this->Customer->findById($id);
+        $service_id = $_GET['id'];
+        $providers = $this->Service->Provider->find('all', array('conditions' => array('Service.id' => $service_id)));
+        //debug($providers);
+       $randomNumber =  $this->generate();
+       echo $randomRef;
+        $this->set(compact('customer', 'providers'));
+    }
+
+    function generate() {
+        $randomNumber = md5(uniqid());
+        return $randomNumber;
+    }
+    public function pay() {
+        $this->layout = false;
+        $email = 'oluwafemiakinde@gmail.com';
+        $amount = 3000;
+        $currency = "NGN";
     }
 }
