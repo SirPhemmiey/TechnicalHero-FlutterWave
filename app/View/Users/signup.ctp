@@ -34,6 +34,10 @@
                                     <input type="tel" class="form-control" required name="data[Customer][phone]" aria-label="enter your phone number"
                                     placeholder="enter your phone number">
                                 </div>
+                                <div class="form-group form-group-default">
+                                    <label>Address</label>
+                                    <textarea class="form-control" required  name="data[Customer][address]" id="" cols="30" rows="10" placeholder="enter your address"></textarea>
+                                </div>
                                 <div class="form-group">
                                     <button class="btn btn-primary btn-block" aria-label="Log in">Create account</button>
                                 </div>
