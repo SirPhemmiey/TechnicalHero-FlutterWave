@@ -1,0 +1,78 @@
+@media only screen and (min-width: 1441px) and (max-width: 1800px) {
+
+}
+
+@media only screen and (min-width: 1200px) and (max-width: 1440px) {
+
+}
+
+@media only screen and (min-width: 1025px) {
+
+}
+
+@media only screen and (min-width: 1025px) and (max-width: 1199px) {
+
+}
+
+@media only screen and (min-width: 992px) and (max-width: 1024px) {
+
+}
+
+@media only screen and (min-width: 768px) and (max-width: 991px) {
+
+}
+
+@media (max-width: 767px) {
+    html {
+        font-size: 0.875em;
+    }
+    .content-wrapper {
+        padding-left: 0px;
+    }
+    .section-heading-text {
+        width: 100%;
+        margin: 0 auto;
+    }
+    .header-bg-img {
+        background-size: cover;
+        width: 100%;
+        background-position: bottom;
+    }
+    .header-wrapper {
+        padding-top: 8rem;
+    }
+    section {
+        padding-top: 100px;
+        padding-bottom: 50px;
+    }
+    .content-wrapper h3 {
+        text-align: center;
+    }
+    .header-wrapper h1 {
+        text-align: center;
+    }
+    .btn-wrapper {
+        display: flex;
+        justify-content: center;
+    }
+    .header-wrapper .col-xs-12.col-md-7,
+    .col-xs-12.col-md-6 .content-wrapper {
+        padding-top: 4rem;
+    }
+}
+
+@media only screen and (min-width: 481px) and (max-width: 767px) {
+
+}
+
+@media only screen and (max-width: 480px) {
+
+}
+
+@media only screen and (max-width: 360px) {
+
+}
+
+@media only screen and (max-width: 320px) {
+
+}
